@@ -1,38 +1,180 @@
-.App {
-  text-align: center;
+.tour {
+  position: relative;
+  min-height: 100%;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: var(--bg);
+  transition: opacity 0.45s ease;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.tour--leaving {
+  opacity: 0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.stage {
+  position: relative;
+  z-index: 1;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  text-align: center;
+  padding: 2rem 1.5rem 3rem;
+  animation: stageIn 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.App-link {
-  color: #61dafb;
+.stage__welcome {
+  margin: 0;
+  max-width: 14ch;
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 9vw, 5.5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  animation: rise 0.95s 0.1s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-@keyframes App-logo-spin {
+.stage__url {
+  margin: 1.75rem 0 0;
+  max-width: 100%;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 4.2vw, 2.35rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  word-break: break-all;
+  animation: rise 0.95s 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.stage__timer {
+  position: absolute;
+  left: 50%;
+  bottom: 1.75rem;
+  width: min(180px, 40vw);
+  height: 2px;
+  transform: translateX(-50%);
+  background: rgba(34, 31, 31, 0.1);
+  overflow: hidden;
+}
+
+.stage__timer-bar {
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  background: var(--brand);
+  animation-name: timerFill;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+.site-preview {
+  position: relative;
+  z-index: 1;
+  height: 100dvh;
+  width: 100%;
+  animation: stageIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.site-preview__frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: var(--white);
+}
+
+.player {
+  position: relative;
+  z-index: 1;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  animation: stageIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.player__frame {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  background: #000;
+  overflow: hidden;
+}
+
+.player__video {
+  width: 100%;
+  height: 100%;
+  max-height: 100dvh;
+  object-fit: contain;
+  background: #000;
+}
+
+.player__play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  appearance: none;
+  border: none;
+  padding: 0.9rem 1.5rem;
+  background: rgba(249, 247, 242, 0.96);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.player__progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+}
+
+.player__progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand), var(--accent));
+  transition: width 0.15s linear;
+}
+
+@keyframes stageIn {
   from {
-    transform: rotate(0deg);
+    opacity: 0;
+    transform: translateY(14px);
   }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes timerFill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
   }
 }
