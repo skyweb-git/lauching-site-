@@ -6,5 +6,6 @@ test("renders welcome and site url", () => {
   expect(
     screen.getByRole("heading", { name: /welcome to swayamkrushi website/i })
   ).toBeInTheDocument();
+  expect(screen.getByText("Swayamkrushi")).toBeInTheDocument();
   expect(screen.getByText(/https:\/\/www\.swayamkrushi\.org/i)).toBeInTheDocument();
 });

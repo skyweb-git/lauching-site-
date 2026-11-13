@@ -8,8 +8,8 @@
   --brand-soft: rgba(51, 89, 145, 0.12);
   --surface-dark: #1a1c1f;
   --white: #ffffff;
-  --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
-  --font-body: "Source Sans 3", "Segoe UI", sans-serif;
+  --head: "Lora", Georgia, serif;
+  --font-body: "Lora", Georgia, serif;
 }
 
 *,
@@ -31,8 +31,4 @@ body {
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-button {
-  font-family: inherit;
 }

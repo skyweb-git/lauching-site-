@@ -10,12 +10,9 @@ const SITE_MS = 10000;
 
 function App() {
   const [phase, setPhase] = useState("welcome");
-  const [progress, setProgress] = useState(0);
-  const [needsPlay, setNeedsPlay] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const videoRef = useRef(null);
   const timersRef = useRef([]);
-
   const clearTimers = () => {
     timersRef.current.forEach(clearTimeout);
     timersRef.current = [];
@@ -27,12 +24,27 @@ function App() {
     window.location.href = SITE_URL;
   };
 
+  const playWithAudio = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = false;
+    video.defaultMuted = false;
+    video.volume = 1;
+    const attempt = video.play();
+    if (attempt && typeof attempt.catch === "function") {
+      attempt.catch(() => {
+        /* Browser may block unmuted autoplay; keep trying quietly */
+        video.muted = false;
+        video.play().catch(() => {});
+      });
+    }
+  };
+
   useEffect(() => {
     const toSite = setTimeout(() => {
       setPhase("site");
       const toVideo = setTimeout(() => {
         setPhase("video");
-        setProgress(0);
       }, SITE_MS);
       timersRef.current = [toVideo];
     }, WELCOME_MS);
@@ -41,45 +53,47 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (phase !== "video" || !videoRef.current) return;
-    const video = videoRef.current;
-    video.muted = false;
-    video.volume = 1;
-    const play = video.play();
-    if (play && typeof play.catch === "function") {
-      play.catch(() => setNeedsPlay(true));
-    }
+    if (phase !== "video") return;
+    playWithAudio();
+    const retry = setInterval(() => {
+      const video = videoRef.current;
+      if (!video) return;
+      if (!video.paused && !video.muted) {
+        clearInterval(retry);
+        return;
+      }
+      playWithAudio();
+    }, 400);
+    const stop = setTimeout(() => clearInterval(retry), 8000);
+    return () => {
+      clearInterval(retry);
+      clearTimeout(stop);
+    };
   }, [phase]);
-
-  const startVideoWithSound = () => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.muted = false;
-    video.volume = 1;
-    video
-      .play()
-      .then(() => setNeedsPlay(false))
-      .catch(() => setNeedsPlay(true));
-  };
-
-  const onTimeUpdate = () => {
-    const video = videoRef.current;
-    if (!video || !video.duration) return;
-    setProgress((video.currentTime / video.duration) * 100);
-  };
 
   return (
     <div className={`tour tour--${phase}${leaving ? " tour--leaving" : ""}`}>
+      <video
+        ref={videoRef}
+        className={
+          phase === "video" ? "player__video" : "player__video player__video--preload"
+        }
+        src={VIDEO_URL}
+        playsInline
+        preload="auto"
+        autoPlay={phase === "video"}
+        muted={false}
+        onEnded={goToSite}
+        data-phase={phase}
+      />
+
       {phase === "welcome" && (
         <section className="stage stage--welcome" aria-live="polite">
-          <h1 className="stage__welcome">Welcome to Swayamkrushi website</h1>
-          <p className="stage__url">https://www.swayamkrushi.org</p>
-          <div className="stage__timer" aria-hidden="true">
-            <span
-              className="stage__timer-bar"
-              style={{ animationDuration: `${WELCOME_MS}ms` }}
-            />
-          </div>
+          <h1 className="wordmark">
+            Welcome to <span className="wordmark__brand">Swayamkrushi</span>{" "}
+            website
+          </h1>
+          <p className="wordmark__link">https://www.swayamkrushi.org</p>
         </section>
       )}
 
@@ -94,37 +108,6 @@ function App() {
         </section>
       )}
 
-      {phase === "video" && (
-        <section className="player">
-          <div className="player__frame player__frame--full">
-            <video
-              ref={videoRef}
-              className="player__video"
-              src={VIDEO_URL}
-              playsInline
-              autoPlay
-              muted={false}
-              onTimeUpdate={onTimeUpdate}
-              onEnded={goToSite}
-            />
-            {needsPlay && (
-              <button
-                type="button"
-                className="player__play"
-                onClick={startVideoWithSound}
-              >
-                Play with sound
-              </button>
-            )}
-            <div className="player__progress" aria-hidden="true">
-              <div
-                className="player__progress-fill"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
-        </section>
-      )}
     </div>
   );
 }
