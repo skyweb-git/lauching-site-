@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "./App.css";
 
 const SITE_URL = "https://www.swayamkrushi.org/";
@@ -34,7 +34,7 @@ function App() {
   const launchBtnRef = useRef(null);
   const celebrateTimerRef = useRef(null);
 
-  const startTour = () => {
+  const startTour = useCallback(() => {
     if (celebrating || phase !== "launch") return;
     setCelebrating(true);
     clearTimeout(celebrateTimerRef.current);
@@ -42,7 +42,7 @@ function App() {
       setCelebrating(false);
       setPhase("welcome");
     }, CELEBRATE_MS);
-  };
+  }, [celebrating, phase]);
 
   const goToSite = () => {
     setLeaving(true);
@@ -80,7 +80,7 @@ function App() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [phase, celebrating]);
+  }, [phase, celebrating, startTour]);
 
   // Welcome → site after 5s; site → video after 10s (separate effects so
   // cleanup does not cancel the video timer when entering site).
