@@ -22,6 +22,9 @@ test("shows launch button first, then welcome after celebration", () => {
   expect(
     screen.getByRole("heading", { name: /welcome to swayamkrushi website/i })
   ).toBeInTheDocument();
+  expect(
+    screen.getByRole("img", { name: /swayamkrushi leader/i })
+  ).toBeInTheDocument();
   expect(screen.getByText("Swayamkrushi")).toBeInTheDocument();
   expect(screen.getByText(/www\.swayamkrushi\.org/i)).toBeInTheDocument();
   expect(

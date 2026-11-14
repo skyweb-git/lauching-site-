@@ -175,6 +175,11 @@ function App() {
 
       {phase === "welcome" && (
         <section className="stage stage--welcome" aria-live="polite">
+          <img
+            className="welcome-portrait"
+            src={`${process.env.PUBLIC_URL}/welcome-portrait.jpg`}
+            alt="Portrait of a Swayamkrushi leader in a cream saree with an Indian flag rosette"
+          />
           <h1 className="wordmark">
             Welcome to <span className="wordmark__brand">Swayamkrushi</span>{" "}
             website
